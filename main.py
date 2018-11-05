@@ -46,9 +46,12 @@ def main():
 
         # refreshing shit
         text = "FPS: {0:.2f}  Playtime: {1:.2f}".format(clock.get_fps(), playtime)
-        screen.blit(image, (x,y))
+
+        screen.blit(background, (0, 0))
+        screen.blit(image, (x, y))
+
         pygame.display.set_caption(text)
-        pygame.display.flip()
+        pygame.display.update()
 
 if __name__ == "__main__":
     main()
