@@ -2,85 +2,110 @@ import pygame
 from Circle import Circle
 from random import randint
 
-circle_list = []
 
-def main():
-    pygame.init()
-    logo = pygame.image.load("logo32x32.png")
-    pygame.display.set_icon(logo)
-    pygame.display.set_caption("minimal program")
+class Main:
+    """Thing to hold the whole game together. """
 
-    screen = pygame.display.set_mode((800, 600))
-    dog = pygame.image.load("dog.png")
-    cat = pygame.image.load("cat.png")
+    def __init__(self, resolution):
+        print("starting up")
+        pygame.init()
+        self.screen = pygame.display.set_mode(resolution)
 
-    [dog_x, dog_y] = dog.get_size()
-    [cat_x, cat_y] = cat.get_size()
+        self.running = True
+        self.FPS = 30
+        self.playtime = 0.0
 
-    background = pygame.Surface(screen.get_size())
-    background.fill((255, 255, 255))
-    background = background.convert()
-    screen.blit(background, (0, 0))
+        logo = pygame.image.load("logo32x32.png")
+        pygame.display.set_icon(logo)
+        pygame.display.set_caption("catdogdogcat")
 
-    clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
 
-    print("start")
-    running = True
-    FPS = 30
-    playtime = 0.0
+        # TODO: make this also a class
+        self.dog = pygame.image.load("dog.png")
+        [self.dog_x, self.dog_y] = self.dog.get_size()
 
-    [screen_x, screen_y] = screen.get_size()
-    step = 10
+        self.cat = pygame.image.load("cat.png")
+        [self.cat_x, self.cat_y] = self.cat.get_size()
 
-    dogX = screen_x / 4 * 3 - dog_x / 2
-    dogY = screen_y - dog_y
+        self.circle_list = []
 
-    catX = screen_x / 4 - cat_x / 2
-    catY = screen_y - cat_y
+        self.background = pygame.Surface(self.screen.get_size())
+        self.background.fill((255, 255, 255))
+        self.background = self.background.convert()
 
-    while running:
-        milliseconds = clock.tick(FPS)
-        playtime += milliseconds / 1000.0
+        [self.screen_x, self.screen_y] = self.screen.get_size()
 
+        self.dogX = self.screen_x / 4 * 3 - self.dog_x / 2
+        self.dogY = self.screen_y - self.dog_y
+
+        self.catX = self.screen_x / 4 - self.cat_x / 2
+        self.catY = self.screen_y - self.cat_y
+
+        self.step = self.screen_x / self.dog_x / 2
+
+    def main(self):
+        while self.running:
+            self.events()
+            self.loop()
+            self.render()
+
+    def events(self):
+        # TODO: lots of the stuff in here should probably be moved out
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print("caught safe quit")
-                running = False
+                self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    running = False
+                    self.running = False
                 if event.key == pygame.K_LEFT:
-                    dogX = 0 if dogX <= 0 else dogX - step
+                    self.dogX = 0 if self.dogX <= 0 else self.dogX - self.step
                 if event.key == pygame.K_a:
-                    catX = 0 if catX <= 0 else catX - step
+                    self.catX = 0 if self.catX <= 0 else self.catX - self.step
                 if event.key == pygame.K_RIGHT:
-                    dogX = screen_x - dog_x if dogX >= screen_x - dog_x \
-                        else dogX + step
+                    if self.dogX >= self.screen_x - self.dog_x:
+                        self.dogX = self.screen_x - self.dog_x
+                    else:
+                        self.dogX += self.step
                 if event.key == pygame.K_d:
-                    catX = screen_x - cat_x if catX >= screen_x - cat_x \
-                        else catX + step
+                    if self.catX >= self.screen_x - self.cat_x:
+                        self.catX = self.screen_x - self.cat_x
+                    else:
+                        self.catX += self.step
 
-        # refreshing shit
-        text = "FPS: {0:.2f}  Playtime: {1:.2f}".format(clock.get_fps(),
-                                                        playtime)
+    def loop(self):
+        # step useless FPS clock
+        milliseconds = self.clock.tick(self.FPS)
+        self.playtime += milliseconds / 1000.0
+        self.text = "FPS: {0:.2f}  Playtime: {1:.2f}".format(
+                self.clock.get_fps(),
+                self.playtime)
 
-        screen.blit(background, (0, 0))
-        screen.blit(dog, (dogX, dogY))
-        screen.blit(cat, (catX, catY))
+        # resize line connecting cat and dog
+        self.point1 = self.dogX + self.dog_x / 2, self.dogY + self.dog_y / 2
+        self.point2 = self.catX + self.cat_x / 2, self.catY + self.cat_y / 2
 
-        point1 = dogX + dog_x / 2, dogY + dog_y / 2
-        point2 = catX + cat_x / 2, catY + cat_y / 2
-        pygame.draw.line(screen, (255, 0, 255), point1, point2, 10)
+        # generate animal food
+        self.circle_list.append(Circle(
+            (randint(0, 150), randint(0, 150), randint(0, 150)),
+            (randint(10, self.screen_x - 10), 10)))
 
-        # if int(playtime) % 2 == 0:
-        circle_list.append(Circle((randint(0, 150), randint(0, 150), randint(0, 150)), (randint(10, screen_x - 10), 10)))
-        for circle in circle_list:
-            pygame.draw.circle(screen, circle.color, circle.pos, circle.radius, circle.width)
+    def render(self):
+        # draw sprites
+        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.dog, (self.dogX, self.dogY))
+        self.screen.blit(self.cat, (self.catX, self.catY))
 
-        pygame.display.set_caption(text)
+        # draw manual stuff
+        pygame.draw.line(self.screen, (255, 0, 255), self.point1, self.point2, 10)
+        for circle in self.circle_list:
+            pygame.draw.circle(self.screen, circle.color, circle.pos, circle.radius, circle.width)
+
+        pygame.display.set_caption(self.text)
         pygame.display.update()
 
 
 if __name__ == "__main__":
-    main()
-
+    main = Main((800, 600))
+    main.main()
