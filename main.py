@@ -1,5 +1,8 @@
 import pygame
+from Circle import Circle
+from random import randint
 
+circle_list = []
 
 def main():
     pygame.init()
@@ -15,7 +18,7 @@ def main():
     [cat_x, cat_y] = cat.get_size()
 
     background = pygame.Surface(screen.get_size())
-    background.fill((255, 0, 0))
+    background.fill((255, 255, 255))
     background = background.convert()
     screen.blit(background, (0, 0))
 
@@ -69,9 +72,15 @@ def main():
         point2 = catX + cat_x / 2, catY + cat_y / 2
         pygame.draw.line(screen, (255, 0, 255), point1, point2, 10)
 
+        # if int(playtime) % 2 == 0:
+        circle_list.append(Circle((randint(0, 150), randint(0, 150), randint(0, 150)), (randint(10, screen_x - 10), 10)))
+        for circle in circle_list:
+            pygame.draw.circle(screen, circle.color, circle.pos, circle.radius, circle.width)
+
         pygame.display.set_caption(text)
         pygame.display.update()
 
 
 if __name__ == "__main__":
     main()
+
