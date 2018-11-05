@@ -28,7 +28,7 @@ class Main:
         self.cat = pygame.image.load("cat.png")
         [self.cat_x, self.cat_y] = self.cat.get_size()
 
-        self.circle_list = []
+        self.circles = []
 
         self.background = pygame.Surface(self.screen.get_size())
         self.background.fill((255, 255, 255))
@@ -87,7 +87,7 @@ class Main:
         self.point2 = self.catX + self.cat_x / 2, self.catY + self.cat_y / 2
 
         # generate animal food
-        self.circle_list.append(Circle(
+        self.circles.append(Circle(
             (randint(0, 150), randint(0, 150), randint(0, 150)),
             (randint(10, self.screen_x - 10), 10)))
 
@@ -98,9 +98,10 @@ class Main:
         self.screen.blit(self.cat, (self.catX, self.catY))
 
         # draw manual stuff
-        pygame.draw.line(self.screen, (255, 0, 255), self.point1, self.point2, 10)
-        for circle in self.circle_list:
-            pygame.draw.circle(self.screen, circle.color, circle.pos, circle.radius, circle.width)
+        pygame.draw.line(self.screen,
+            (255, 0, 255), self.point1, self.point2, 10)
+        for c in self.circles:
+            pygame.draw.circle(self.screen, c.color, c.pos, c.radius, c.width)
 
         pygame.display.set_caption(self.text)
         pygame.display.update()
