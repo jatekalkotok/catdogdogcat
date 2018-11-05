@@ -1,5 +1,5 @@
 import pygame
-from Circle import Circle
+from circle import Circle
 from random import randint
 
 
