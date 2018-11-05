@@ -29,10 +29,10 @@ def main():
     [screen_x, screen_y] = screen.get_size()
     step = 10
 
-    dogX = screen_x / 2 - dog_x / 2
+    dogX = screen_x / 4 * 3 - dog_x / 2
     dogY = screen_y - dog_y
 
-    catX = screen_x / 2 - cat_x / 2
+    catX = screen_x / 4 - cat_x / 2
     catY = screen_y - cat_y
 
     while running:
@@ -64,6 +64,10 @@ def main():
         screen.blit(background, (0, 0))
         screen.blit(dog, (dogX, dogY))
         screen.blit(cat, (catX, catY))
+
+        point1 = dogX + dog_x / 2, dogY + dog_y / 2
+        point2 = catX + cat_x / 2, catY + cat_y / 2
+        pygame.draw.line(screen, (255, 0, 255), point1, point2, 10)
 
         pygame.display.set_caption(text)
         pygame.display.update()
