@@ -1,6 +1,7 @@
 import pygame
 from circle import Circle
 from random import randint
+from os import path
 
 
 class Main:
@@ -16,17 +17,17 @@ class Main:
         self.playtime = 0.0
         self.gravity = 1
 
-        logo = pygame.image.load("logo32x32.png")
+        logo = pygame.image.load(path.join("assets", "logo32x32.png"))
         pygame.display.set_icon(logo)
         pygame.display.set_caption("catdogdogcat")
 
         self.clock = pygame.time.Clock()
 
         # TODO: make this also a class
-        self.dog = pygame.image.load("dog.png")
+        self.dog = pygame.image.load(path.join("assets", "dog.png"))
         [self.dog_x, self.dog_y] = self.dog.get_size()
 
-        self.cat = pygame.image.load("cat.png")
+        self.cat = pygame.image.load(path.join("assets", "cat.png"))
         [self.cat_x, self.cat_y] = self.cat.get_size()
 
         self.circles = []
