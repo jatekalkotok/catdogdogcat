@@ -14,6 +14,7 @@ class Main:
         self.running = True
         self.FPS = 30
         self.playtime = 0.0
+        self.gravity = 1
 
         logo = pygame.image.load("logo32x32.png")
         pygame.display.set_icon(logo)
@@ -86,10 +87,13 @@ class Main:
         self.point1 = self.dogX + self.dog_x / 2, self.dogY + self.dog_y / 2
         self.point2 = self.catX + self.cat_x / 2, self.catY + self.cat_y / 2
 
-        # generate animal food
+        # generate new animal food
         self.circles.append(Circle(
             (randint(0, 150), randint(0, 150), randint(0, 150)),
             (randint(10, self.screen_x - 10), 10)))
+
+        # animal food falls down
+        for c in self.circles: c.drop(self.gravity)
 
     def render(self):
         # draw sprites
