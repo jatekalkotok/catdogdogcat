@@ -97,16 +97,15 @@ class Main:
         for c in self.circles: c.drop(self.gravity)
 
     def render(self):
-        # draw sprites
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.dog, (self.dogX, self.dogY))
-        self.screen.blit(self.cat, (self.catX, self.catY))
 
-        # draw manual stuff
-        pygame.draw.line(self.screen,
-            (255, 0, 255), self.point1, self.point2, 10)
         for c in self.circles:
             pygame.draw.circle(self.screen, c.color, c.pos, c.radius, c.width)
+
+        pygame.draw.line(self.screen,
+            (255, 0, 255), self.point1, self.point2, 10)
+        self.screen.blit(self.dog, (self.dogX, self.dogY))
+        self.screen.blit(self.cat, (self.catX, self.catY))
 
         pygame.display.set_caption(self.text)
         pygame.display.update()
