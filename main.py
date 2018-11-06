@@ -1,5 +1,5 @@
 import pygame
-from circle import Circle
+from obstacle import Obstacle
 from random import randint
 from os import path
 
@@ -17,6 +17,9 @@ class Main:
         self.playtime = 0.0
         self.gravity = 1
 
+        # time in seconds when a new obstacle needs to be added to the game
+        self.obstacle_tick_time = 0
+
         logo = pygame.image.load(path.join("assets", "logo32x32.png"))
         pygame.display.set_icon(logo)
         pygame.display.set_caption("catdogdogcat")
@@ -30,7 +33,7 @@ class Main:
         self.cat = pygame.image.load(path.join("assets", "cat.png"))
         [self.cat_x, self.cat_y] = self.cat.get_size()
 
-        self.circles = []
+        self.obstacles = []
 
         self.background = pygame.Surface(self.screen.get_size())
         self.background.fill((255, 255, 255))
@@ -84,23 +87,29 @@ class Main:
                 self.clock.get_fps(),
                 self.playtime)
 
+
         # resize line connecting cat and dog
         self.point1 = self.dogX + self.dog_x / 2, self.dogY + self.dog_y / 2
         self.point2 = self.catX + self.cat_x / 2, self.catY + self.cat_y / 2
 
         # generate new animal food
-        self.circles.append(Circle(
-            (randint(0, 150), randint(0, 150), randint(0, 150)),
-            (randint(10, self.screen_x - 10), 10)))
+        if int(self.playtime) == self.obstacle_tick_time:
+            # Next obstacle will be added 1-2 sec later
+            self.obstacle_tick_time += randint(1, 2)
+            self.obstacles.append(Obstacle(
+                bool(randint(0, 1)),
+                bool(randint(0, 1)),
+                (randint(10, self.screen_x - 10), 10)))
 
         # animal food falls down
-        for c in self.circles: c.drop(self.gravity)
+        for o in self.obstacles: o.drop(self.gravity)
 
     def render(self):
         self.screen.blit(self.background, (0, 0))
 
-        for c in self.circles:
-            pygame.draw.circle(self.screen, c.color, c.pos, c.radius, c.width)
+        for o in self.obstacles:
+            img = pygame.image.load(path.join("assets", o.get_asset()))
+            self.screen.blit(img, o.pos)
 
         pygame.draw.line(self.screen,
             (255, 0, 255), self.point1, self.point2, 10)
