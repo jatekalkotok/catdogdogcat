@@ -1,3 +1,10 @@
+import pygame
+from os import path
+
+_assets = {}
+for x in ["milk", "broccoli", "bone", "fish"]:
+    _assets[x] = pygame.image.load(path.join("assets", x + ".png"))
+
 class Obstacle:
     for_dog = None
     for_cat = None
@@ -13,10 +20,10 @@ class Obstacle:
 
     def get_asset(self):
         if self.for_dog and self.for_cat:
-            return "milk.png"
+            return _assets["milk"]
         elif not self.for_dog and not self.for_cat:
-            return "broccoli.png"
+            return _assets["broccoli"]
         elif self.for_dog:
-            return "bone.png"
+            return _assets["bone"]
         else:
-            return "fish.png"
+            return _assets["fish"]
