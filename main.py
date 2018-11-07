@@ -108,7 +108,7 @@ class Main:
         self.screen.blit(self.background, (0, 0))
 
         for o in self.obstacles:
-            self.screen.blit(o.get_asset(), o.pos)
+            self.screen.blit(o.image, o.pos)
 
         pygame.draw.line(self.screen,
             (255, 0, 255), self.point1, self.point2, 10)
