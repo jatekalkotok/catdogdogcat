@@ -24,6 +24,8 @@ class Main:
         self.obstacle_tick_time = 0
         self.obstacles = []
 
+        self.move_ticker = 0
+
         logo = pygame.image.load(path.join("assets", "logo32x32.png"))
         pygame.display.set_icon(logo)
         pygame.display.set_caption("catdogdogcat")
@@ -47,10 +49,11 @@ class Main:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: self.running = False
-                if event.key == pygame.K_LEFT: self.animal.dog.left()
-                if event.key == pygame.K_a: self.animal.cat.left()
-                if event.key == pygame.K_RIGHT: self.animal.dog.right(self.screen)
-                if event.key == pygame.K_d :self.animal.cat.right(self.screen)
+        keys=pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]: self.animal.dog.left()
+        if keys[pygame.K_a]: self.animal.cat.left()
+        if keys[pygame.K_RIGHT]: self.animal.dog.right(self.screen)
+        if keys[pygame.K_d]: self.animal.cat.right(self.screen)
 
     def loop(self):
         # step useless FPS clock
@@ -59,6 +62,11 @@ class Main:
         self.text = "FPS: {0:.2f}  Playtime: {1:.2f}".format(
                 self.clock.get_fps(),
                 self.playtime)
+
+        if self.animal.dog.move_ticker > 0:
+            self.animal.dog.move_ticker -= 1
+        if self.animal.cat.move_ticker > 0:
+            self.animal.cat.move_ticker -= 1
 
         # generate new animal food
         if int(self.playtime) == self.obstacle_tick_time:

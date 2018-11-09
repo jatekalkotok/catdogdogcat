@@ -11,6 +11,8 @@ class Animal:
 class Head:
     """One head of the animal."""
 
+    MOVE_TICK_TIME = 2
+
     def __init__(self, animal_type, screen):
         if animal_type not in ["dog", "cat"]:
             raise ValueError("Animal Head must be one of 'dog' or 'cat'")
@@ -18,6 +20,7 @@ class Head:
         self.image = pygame.image.load(
                 path.join("assets", animal_type + ".png"))
         self.pos = self._start_pos(screen)
+        self.move_ticker = 0
         self._step = screen.get_size()[0] / self.image.get_size()[0] / 2
         self._center = self.image.get_rect().center
         self._recenter()
@@ -46,13 +49,16 @@ class Head:
 
     def left(self):
         """Step left but not into negative"""
+        if self.move_ticker > 0: return
         print(self.animal_type + " move left")
         x = self.pos[0]
         x = 0 if x <= 0 else x - self._step
         self.pos = (x, self.pos[1])
         self._recenter()
+        self.move_ticker = self.MOVE_TICK_TIME
 
     def right(self, screen):
+        if self.move_ticker > 0: return
         """Step right but not off the screen"""
         print(self.animal_type + " move right")
         x = self.pos[0]
@@ -60,3 +66,4 @@ class Head:
         x = screen_max if x >= screen_max else x + self._step
         self.pos = (x, self.pos[1])
         self._recenter()
+        self.move_ticker = self.MOVE_TICK_TIME
