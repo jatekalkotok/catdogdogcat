@@ -48,11 +48,19 @@ class Main:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: self.running = False
-        keys=pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]: self.animal.dog.left()
-        if keys[pygame.K_a]: self.animal.cat.left()
-        if keys[pygame.K_RIGHT]: self.animal.dog.right(self.screen)
-        if keys[pygame.K_d]: self.animal.cat.right(self.screen)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.animal.dog.left()
+            self.animal.update_body()
+        if keys[pygame.K_a]:
+            self.animal.cat.left()
+            self.animal.update_body()
+        if keys[pygame.K_RIGHT]:
+            self.animal.dog.right(self.screen)
+            self.animal.update_body()
+        if keys[pygame.K_d]:
+            self.animal.cat.right(self.screen)
+            self.animal.update_body()
 
     def loop(self):
         # step useless FPS clock
@@ -85,8 +93,11 @@ class Main:
         for o in self.obstacles:
             self.screen.blit(o.image, o.pos)
 
-        pygame.draw.line(self.screen, (255, 0, 255),
-            self.animal.dog.center, self.animal.cat.center, 10)
+        pygame.draw.line(self.screen,
+                         self.animal.body.color,
+                         self.animal.body.sides[0],
+                         self.animal.body.sides[1],
+                         self.animal.body.thickness)
         self.screen.blit(self.animal.dog.image, self.animal.dog.pos)
         self.screen.blit(self.animal.cat.image, self.animal.cat.pos)
 

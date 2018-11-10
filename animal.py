@@ -8,6 +8,21 @@ class Animal:
     def __init__(self, screen):
         self.cat = Head("cat", screen)
         self.dog = Head("dog", screen)
+        self.body = Body()
+        self.update_body()
+
+    def update_body(self):
+        self.body.calculate_body(self.dog.center, self.cat.center)
+
+class Body:
+    """ Body between the heads """
+
+    sides = (0, 0)
+    thickness = 30
+    color = (0, 0, 255)
+
+    def calculate_body(self, start, end):
+        self.sides = (start, end)
 
 
 class Head:
