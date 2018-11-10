@@ -1,12 +1,14 @@
 import pygame
 from os import path
 
+
 class Animal:
     """Never in my life did I think I would really make an animal class."""
 
     def __init__(self, screen):
         self.cat = Head("cat", screen)
         self.dog = Head("dog", screen)
+
 
 class Head:
     """One head of the animal."""
@@ -18,7 +20,7 @@ class Head:
             raise ValueError("Animal Head must be one of 'dog' or 'cat'")
         self.animal_type = animal_type
         self.image = pygame.image.load(
-                path.join("assets", animal_type + ".png"))
+            path.join("assets", animal_type + ".png"))
         self.pos = self._start_pos(screen)
         self.move_ticker = 0
         self._step = screen.get_size()[0] / self.image.get_size()[0] / 2
@@ -44,8 +46,8 @@ class Head:
     def _recenter(self):
         """Reposition centre point based on position and image centre"""
         self.center = (
-                self.pos[0] + self._center[0],
-                self.pos[1] + self._center[1])
+            self.pos[0] + self._center[0],
+            self.pos[1] + self._center[1])
 
     def left(self):
         """Step left but not into negative"""
