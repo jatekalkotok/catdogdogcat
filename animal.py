@@ -8,18 +8,32 @@ class Animal:
     def __init__(self, screen):
         self.cat = Head("cat", screen)
         self.dog = Head("dog", screen)
-        self.body = Body()
+        self.body = Body(screen, self.cat.image.get_size()[0]
+                         + self.dog.image.get_size()[0])
         self.update_body()
 
     def update_body(self):
         self.body.calculate_body(self.dog.center, self.cat.center)
 
+
 class Body:
     """ Body between the heads """
 
-    sides = (0, 0)
-    thickness = 30
+    sides = ((0, 0), (0, 0))
     color = (0, 0, 255)
+    thickness_multiplier = 10
+
+    @property
+    def thickness(self):
+        distance = abs(self.sides[0][0] - self.sides[1][0])
+        if distance <= self.heads_size / 2:
+            distance = self.heads_size / 2
+        return int(self.screen.get_size()[0] / distance
+                   * self.thickness_multiplier)
+
+    def __init__(self, screen, heads_size):
+        self.screen = screen
+        self.heads_size = heads_size
 
     def calculate_body(self, start, end):
         self.sides = (start, end)
