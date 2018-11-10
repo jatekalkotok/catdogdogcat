@@ -30,9 +30,8 @@ class Main:
         pygame.display.set_icon(logo)
         pygame.display.set_caption("catdogdogcat")
 
-        self.background = pygame.Surface(self.screen.get_size())
-        self.background.fill((255, 255, 255))
-        self.background = self.background.convert()
+        self.background_image = \
+            pygame.image.load(path.join("assets", "background.png")).convert()
 
         self.animal = Animal(self.screen)
 
@@ -81,7 +80,7 @@ class Main:
         for o in self.obstacles: o.drop(self.gravity)
 
     def render(self):
-        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.background_image, (0, 0))
 
         for o in self.obstacles:
             self.screen.blit(o.image, o.pos)
