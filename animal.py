@@ -93,8 +93,8 @@ class Head:
         """Step right but not off the screen"""
         print(self.animal_type + " move right")
         x = self.pos[0]
-        screen_max = screen.get_size()[0]
-        x = screen_max if x >= screen_max else x + self._step
+        max_x = screen.get_size()[0] - self.image.get_size()[0]
+        x = max_x if x >= max_x else x + self._step
         self.pos = (x, self.pos[1])
         self._recenter()
         self.move_ticker = self.MOVE_TICK_TIME
