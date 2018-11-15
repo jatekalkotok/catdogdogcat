@@ -24,6 +24,9 @@ class Main:
         self.obstacle_tick_time = 0
         self.obstacles = []
 
+        # player score
+        self.points = 0
+
         self.move_ticker = 0
 
         logo = pygame.image.load(path.join("assets", "logo32x32.png"))
@@ -66,9 +69,6 @@ class Main:
         # step useless FPS clock
         milliseconds = self.clock.tick(self.FPS)
         self.playtime += milliseconds / 1000.0
-        self.text = "Food: {0:.0f}  Playtime: {1:.2f}".format(
-                len(self.obstacles),
-                self.playtime)
 
         if self.animal.dog.move_ticker > 0:
             self.animal.dog.move_ticker -= 1
@@ -87,10 +87,18 @@ class Main:
         # animal food falls down
         for o in self.obstacles: o.drop(self.gravity)
 
-        # food off the screen is removed #XXX: should this lose points?
+        # food off the screen is removed
+        # TODO: instead of _off_ the screen, trigger when _hits_ the screen and
+        # have a dramatic impact animation so the player feels it is bad
         for o in self.obstacles:
             if o.pos[1] > self.screen.get_size()[1]:
                 self.obstacles.remove(o)
+                self.points -= 1
+
+        self.text = "Food: {0:.0f}  Points: {1:.0f}  Playtime: {2:.2f}".format(
+                len(self.obstacles),
+                self.points,
+                self.playtime)
 
     def render(self):
         self.screen.blit(self.background_image, (0, 0))
