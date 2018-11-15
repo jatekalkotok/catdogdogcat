@@ -66,8 +66,8 @@ class Main:
         # step useless FPS clock
         milliseconds = self.clock.tick(self.FPS)
         self.playtime += milliseconds / 1000.0
-        self.text = "FPS: {0:.2f}  Playtime: {1:.2f}".format(
-                self.clock.get_fps(),
+        self.text = "Food: {0:.0f}  Playtime: {1:.2f}".format(
+                len(self.obstacles),
                 self.playtime)
 
         if self.animal.dog.move_ticker > 0:
