@@ -26,6 +26,7 @@ class Main:
 
         # player score
         self.points = 0
+        self.MIN_SCORE = -9
 
         self.move_ticker = 0
 
@@ -99,6 +100,10 @@ class Main:
                 len(self.obstacles),
                 self.points,
                 self.playtime)
+
+        if self.points < self.MIN_SCORE:
+            print("GAME OVER")
+            self.running = False
 
     def render(self):
         self.screen.blit(self.background_image, (0, 0))
