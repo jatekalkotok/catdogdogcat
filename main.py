@@ -87,6 +87,11 @@ class Main:
         # animal food falls down
         for o in self.obstacles: o.drop(self.gravity)
 
+        # food off the screen is removed #XXX: should this lose points?
+        for o in self.obstacles:
+            if o.pos[1] > self.screen.get_size()[1]:
+                self.obstacles.remove(o)
+
     def render(self):
         self.screen.blit(self.background_image, (0, 0))
 
