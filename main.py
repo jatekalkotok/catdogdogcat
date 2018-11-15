@@ -16,7 +16,13 @@ class Main:
         self.running = True
         self.FPS = 30
         self.playtime = 0.0
+
+        # Things for game difficulty
         self.gravity = 1
+        self.gravity_tick = 0.5
+        self.difficulty = 1
+        self.difficulty_frequency_sec = 10
+        self.difficulty_tick_time = 10
 
         self.clock = pygame.time.Clock()
 
@@ -96,10 +102,16 @@ class Main:
                 self.obstacles.remove(o)
                 self.points -= 1
 
-        self.text = "Food: {0:.0f}  Points: {1:.0f}  Playtime: {2:.2f}".format(
-                len(self.obstacles),
-                self.points,
-                self.playtime)
+        if int(self.playtime) == self.difficulty_tick_time:
+            self.difficulty_tick_time += self.difficulty_frequency_sec
+            self.gravity += self.gravity_tick
+            self.difficulty += 1
+
+        self.text = "Food: {0:.0f}  Points: {1:.0f}  Playtime: {2:.2f}  Difficulty: {3:.0f}".format(
+            len(self.obstacles),
+            self.points,
+            self.playtime,
+            self.difficulty)
 
         if self.points < self.MIN_SCORE:
             print("GAME OVER")
