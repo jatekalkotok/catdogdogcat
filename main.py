@@ -107,6 +107,12 @@ class Main:
             self.gravity += self.gravity_tick
             self.difficulty += 1
 
+        # food you catch earns points
+        self.points += len(pygame.sprite.spritecollide(
+            self.animal.dog, self.obstacles, True))
+        self.points += len(pygame.sprite.spritecollide(
+            self.animal.cat, self.obstacles, True))
+
         self.text = "Food: {0:d}  Points: {1:d}  Playtime: {2:.2f}  Difficulty: {3:d}".format(
             len(self.obstacles),
             self.points,
