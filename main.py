@@ -107,7 +107,7 @@ class Main:
             self.gravity += self.gravity_tick
             self.difficulty += 1
 
-        self.text = "Food: {0:.0f}  Points: {1:.0f}  Playtime: {2:.2f}  Difficulty: {3:.0f}".format(
+        self.text = "Food: {0:d}  Points: {1:d}  Playtime: {2:.2f}  Difficulty: {3:d}".format(
             len(self.obstacles),
             self.points,
             self.playtime,
