@@ -13,7 +13,7 @@ class Animal:
         self.update_body()
 
     def update_body(self):
-        self.body.calculate_body(self.dog.center, self.cat.center)
+        self.body.calculate_body(self.dog.rect.center, self.cat.rect.center)
 
 
 class Body:
@@ -39,62 +39,45 @@ class Body:
         self.sides = (start, end)
 
 
-class Head:
+class Head(pygame.sprite.Sprite):
     """One head of the animal."""
 
     MOVE_TICK_TIME = 2
 
     def __init__(self, animal_type, screen):
+        pygame.sprite.Sprite.__init__(self)
         if animal_type not in ["dog", "cat"]:
             raise ValueError("Animal Head must be one of 'dog' or 'cat'")
+        self.screen = screen
         self.animal_type = animal_type
         self.image = pygame.image.load(
             path.join("assets", animal_type + ".png"))
-        self.pos = self._start_pos(screen)
+        self.rect = self.image.get_rect()
+        self._start_pos()
         self.move_ticker = 0
         self._step = screen.get_size()[0] / self.image.get_size()[0] / 2
-        self._center = self.image.get_rect().center
-        self._recenter()
 
-    def _start_pos(self, screen):
-        """Calculate starting position for animal head
-        :returns: array of coordinates
-        """
+    def _start_pos(self):
+        """Calculate starting position for animal head"""
         # shortcuts
-        [[s_x, s_y], [i_x, i_y]] = [screen.get_size(), self.image.get_size()]
+        [[s_w, s_h], [i_w, i_h]] = [ self.screen.get_size(), self.image.get_size() ]
 
         # what name do you give a multiplier for positioning based on what side
         # of the screen a thing is on?
         side_multiplier = 1 if self.animal_type is "cat" else 3
 
-        return [
-            s_x / 4 * side_multiplier - i_x / 2,
-            s_y - i_y
-        ]
-
-    def _recenter(self):
-        """Reposition centre point based on position and image centre"""
-        self.center = (
-            self.pos[0] + self._center[0],
-            self.pos[1] + self._center[1])
+        self.rect.x = s_w / 4 * side_multiplier - i_w / 2
+        self.rect.y = s_h - i_h
 
     def left(self):
         """Step left but not into negative"""
         if self.move_ticker > 0: return
-        print(self.animal_type + " move left")
-        x = self.pos[0]
-        x = 0 if x <= 0 else x - self._step
-        self.pos = (x, self.pos[1])
-        self._recenter()
+        if self.rect.x > 0: self.rect.move_ip(-self._step, 0)
         self.move_ticker = self.MOVE_TICK_TIME
 
-    def right(self, screen):
-        if self.move_ticker > 0: return
+    def right(self):
         """Step right but not off the screen"""
-        print(self.animal_type + " move right")
-        x = self.pos[0]
-        max_x = screen.get_size()[0] - self.image.get_size()[0]
-        x = max_x if x >= max_x else x + self._step
-        self.pos = (x, self.pos[1])
-        self._recenter()
+        if self.move_ticker > 0: return
+        if self.rect.x < self.screen.get_rect().width - self.rect.width:
+            self.rect.move_ip(self._step, 0)
         self.move_ticker = self.MOVE_TICK_TIME

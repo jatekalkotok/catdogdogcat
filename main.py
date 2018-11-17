@@ -66,10 +66,10 @@ class Main:
             self.animal.cat.left()
             self.animal.update_body()
         if keys[pygame.K_RIGHT]:
-            self.animal.dog.right(self.screen)
+            self.animal.dog.right()
             self.animal.update_body()
         if keys[pygame.K_d]:
-            self.animal.cat.right(self.screen)
+            self.animal.cat.right()
             self.animal.update_body()
 
     def loop(self):
@@ -128,8 +128,8 @@ class Main:
                          self.animal.body.sides[0],
                          self.animal.body.sides[1],
                          self.animal.body.thickness)
-        self.screen.blit(self.animal.dog.image, self.animal.dog.pos)
-        self.screen.blit(self.animal.cat.image, self.animal.cat.pos)
+        self.screen.blit(self.animal.dog.image, self.animal.dog.rect)
+        self.screen.blit(self.animal.cat.image, self.animal.cat.rect)
 
         pygame.display.set_caption(self.text)
         pygame.display.update()
