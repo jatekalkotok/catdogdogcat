@@ -28,7 +28,7 @@ class Main:
 
         # time in seconds when a new obstacle needs to be added to the game
         self.obstacle_tick_time = 0
-        self.obstacles = []
+        self.obstacles = pygame.sprite.Group()
 
         # player score
         self.points = 0
@@ -86,19 +86,19 @@ class Main:
         if int(self.playtime) == self.obstacle_tick_time:
             # Next obstacle will be added 1-2 sec later
             self.obstacle_tick_time += randint(1, 2)
-            self.obstacles.append(Obstacle(
+            self.obstacles.add(Obstacle(
                 bool(randint(0, 1)),
                 bool(randint(0, 1)),
                 (randint(10, self.screen.get_size()[0] - 10), 10)))
 
         # animal food falls down
-        for o in self.obstacles: o.drop(self.gravity)
+        self.obstacles.update(self.gravity)
 
         # food off the screen is removed
         # TODO: instead of _off_ the screen, trigger when _hits_ the screen and
         # have a dramatic impact animation so the player feels it is bad
         for o in self.obstacles:
-            if o.pos[1] > self.screen.get_size()[1]:
+            if o.rect.y > self.screen.get_rect().height:
                 self.obstacles.remove(o)
                 self.points -= 1
 
@@ -119,9 +119,7 @@ class Main:
 
     def render(self):
         self.screen.blit(self.background_image, (0, 0))
-
-        for o in self.obstacles:
-            self.screen.blit(o.image, o.pos)
+        self.obstacles.draw(self.screen)
 
         pygame.draw.line(self.screen,
                          self.animal.body.color,
