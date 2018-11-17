@@ -6,8 +6,8 @@ class Animal:
     """Never in my life did I think I would really make an animal class."""
 
     def __init__(self, screen):
-        self.cat = Head("cat", screen)
-        self.dog = Head("dog", screen)
+        self.cat = Head(self, screen, "cat")
+        self.dog = Head(self, screen, "dog")
         self.body = Body(screen, self.cat.image.get_size()[0]
                          + self.dog.image.get_size()[0])
         self.update_body()
@@ -44,8 +44,9 @@ class Head(pygame.sprite.Sprite):
 
     MOVE_TICK_TIME = 2
 
-    def __init__(self, animal_type, screen):
+    def __init__(self, animal, screen, animal_type):
         pygame.sprite.Sprite.__init__(self)
+        self.animal = animal
         if animal_type not in ["dog", "cat"]:
             raise ValueError("Animal Head must be one of 'dog' or 'cat'")
         self.screen = screen
@@ -69,15 +70,27 @@ class Head(pygame.sprite.Sprite):
         self.rect.x = s_w / 4 * side_multiplier - i_w / 2
         self.rect.y = s_h - i_h
 
+    def _other(self):
+        if self.animal_type == "cat":
+            return self.animal.dog
+        if self.animal_type == "dog":
+            return self.animal.cat
+        return None
+
     def left(self):
         """Step left but not into negative"""
         if self.move_ticker > 0: return
-        if self.rect.x > 0: self.rect.move_ip(-self._step, 0)
+        if self.rect.move(-self._step, 0).colliderect(self._other().rect): return
+        if self.rect.x <= 0: return
+
+        self.rect.move_ip(-self._step, 0)
         self.move_ticker = self.MOVE_TICK_TIME
 
     def right(self):
         """Step right but not off the screen"""
         if self.move_ticker > 0: return
-        if self.rect.x < self.screen.get_rect().width - self.rect.width:
-            self.rect.move_ip(self._step, 0)
+        if self.rect.move(self._step, 0).colliderect(self._other().rect): return
+        if self.rect.x >= self.screen.get_rect().width - self.rect.width: return
+
+        self.rect.move_ip(self._step, 0)
         self.move_ticker = self.MOVE_TICK_TIME
