@@ -45,6 +45,10 @@ class Main:
 
         self.animal = Animal(self.screen)
 
+        self.fonts = {
+            'score': pygame.font.Font('assets/GochiHand-Regular.ttf', 50)
+        }
+
     def main(self):
         while self.running:
             self.events()
@@ -134,6 +138,9 @@ class Main:
                          self.animal.body.thickness)
         self.screen.blit(self.animal.dog.image, self.animal.dog.rect)
         self.screen.blit(self.animal.cat.image, self.animal.cat.rect)
+
+        self.screen.blit(self.fonts['score'].render(
+            "score: {:d}".format(self.points), False, (255,255,255)), (0,0))
 
         pygame.display.set_caption(self.text)
         pygame.display.update()
