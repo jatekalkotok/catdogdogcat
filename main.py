@@ -112,10 +112,10 @@ class Main:
             self.difficulty += 1
 
         # food you catch earns points
-        self.points += len(pygame.sprite.spritecollide(
-            self.animal.dog, self.obstacles, True))
-        self.points += len(pygame.sprite.spritecollide(
-            self.animal.cat, self.obstacles, True))
+        for a in [self.animal.dog, self.animal.cat]:
+            caught = pygame.sprite.spritecollide( a, self.obstacles, True)
+            self.points += len([c for c in caught if a.animal_type in c.for_what])
+            self.points -= 2 * len([c for c in caught if a.animal_type not in c.for_what])
 
         self.text = "Food: {0:d}  Points: {1:d}  Playtime: {2:.2f}  Difficulty: {3:d}".format(
             len(self.obstacles),
