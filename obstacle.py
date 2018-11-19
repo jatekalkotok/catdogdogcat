@@ -12,6 +12,9 @@ class Obstacle(pygame.sprite.Sprite):
         self.image = self._whatami(for_dog, for_cat)
         self.rect = self.image.get_rect()
         [self.rect.x, self.rect.y] = pos
+        self.for_what = []
+        if for_dog: self.for_what.append('dog')
+        if for_cat: self.for_what.append('cat')
 
     def update(self, gravity):
         self._drop(gravity)

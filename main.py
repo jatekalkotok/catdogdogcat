@@ -104,7 +104,7 @@ class Main:
         for o in self.obstacles:
             if o.rect.y > self.screen.get_rect().height:
                 self.obstacles.remove(o)
-                self.points -= 1
+                if len(o.for_what): self.points -= 1
 
         if int(self.playtime) == self.difficulty_tick_time:
             self.difficulty_tick_time += self.difficulty_frequency_sec
