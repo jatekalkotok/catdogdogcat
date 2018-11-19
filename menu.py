@@ -19,8 +19,8 @@ class Menu:
         self.menu_items = []
         self.selected_menu_item = 0
 
-        self.font_title = pygame.font.SysFont('Comic Sans MS', 100)
-        self.font_menu = pygame.font.SysFont('Comic Sans MS', 30)
+        self.font_title = pygame.font.Font("assets/GochiHand-Regular.ttf", 100)
+        self.font_menu = pygame.font.Font("assets/GochiHand-Regular.ttf", 30)
 
         self.background_image = \
             pygame.image.load(path.join("assets", "background.png")).convert()
@@ -56,7 +56,7 @@ class Menu:
 
         title_text = self.font_title.render(self.title, False, self.text_color)
         self.screen.blit(title_text, (self.screen.get_size()[0] / 2 - title_text.get_width() / 2,
-                                      self.screen.get_size()[1] / 3))
+                                      self.screen.get_size()[1] / 4))
 
         for i in range(len(self.menu_item_texts)):
             string = self.menu_item_texts[i]
