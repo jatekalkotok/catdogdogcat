@@ -115,7 +115,13 @@ class Main:
         for a in [self.animal.dog, self.animal.cat]:
             caught = pygame.sprite.spritecollide( a, self.obstacles, True)
             self.points += len([c for c in caught if a.animal_type in c.for_what])
-            self.points -= 2 * len([c for c in caught if a.animal_type not in c.for_what])
+            miscatch = len([c for c in caught if a.animal_type not in c.for_what])
+            self.points -= 2 * miscatch
+            if miscatch > 0: a.freeze()
+
+        # update heads state
+        self.animal.dog.update()
+        self.animal.cat.update()
 
         self.text = "Food: {0:d}  Points: {1:d}  Playtime: {2:.2f}  Difficulty: {3:d}".format(
             len(self.obstacles),

@@ -43,6 +43,7 @@ class Head(pygame.sprite.Sprite):
     """One head of the animal."""
 
     MOVE_TICK_TIME = 2
+    FREEZE_TICK_TIME = 20
 
     def __init__(self, animal, screen, animal_type):
         pygame.sprite.Sprite.__init__(self)
@@ -57,6 +58,8 @@ class Head(pygame.sprite.Sprite):
         self._start_pos()
         self.move_ticker = 0
         self._step = screen.get_size()[0] / self.image.get_size()[0] / 2
+        self._frozen = False
+        self._freeze_ticker = 0
 
     def _start_pos(self):
         """Calculate starting position for animal head"""
@@ -77,9 +80,21 @@ class Head(pygame.sprite.Sprite):
             return self.animal.cat
         return None
 
+    def update(self):
+        """Game state logic for every tick"""
+        # TODO: call other common logic here
+
+        # tick down freeze until you can move again
+        if self._frozen:
+            if self._freeze_ticker > 0:
+                self._freeze_ticker -= 1
+            else:
+                self._frozen = False
+
     def left(self):
         """Step left but not into negative"""
         if self.move_ticker > 0: return
+        if self._frozen: return
         if self.rect.move(-self._step, 0).colliderect(self._other().rect): return
         if self.rect.x <= 0: return
 
@@ -89,8 +104,14 @@ class Head(pygame.sprite.Sprite):
     def right(self):
         """Step right but not off the screen"""
         if self.move_ticker > 0: return
+        if self._frozen: return
         if self.rect.move(self._step, 0).colliderect(self._other().rect): return
         if self.rect.x >= self.screen.get_rect().width - self.rect.width: return
 
         self.rect.move_ip(self._step, 0)
         self.move_ticker = self.MOVE_TICK_TIME
+
+    def freeze(self):
+        """Stop the head from moving for a while"""
+        self._frozen = True
+        self._freeze_ticker = self.FREEZE_TICK_TIME
