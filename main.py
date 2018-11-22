@@ -3,6 +3,7 @@ from animal import Animal
 from obstacle import Obstacle
 from random import randint
 from os import path
+from menupoint import MenuPoint
 
 
 class Main:
@@ -13,7 +14,11 @@ class Main:
         pygame.init()
         self.screen = pygame.display.set_mode(resolution)
 
+        self.title = "catdogdogcat"
+
         self.running = True
+        self.paused = False
+
         self.FPS = 30
         self.playtime = 0.0
 
@@ -38,7 +43,7 @@ class Main:
 
         logo = pygame.image.load(path.join("assets", "logo32x32.png"))
         pygame.display.set_icon(logo)
-        pygame.display.set_caption("catdogdogcat")
+        pygame.display.set_caption(self.title)
 
         self.background_image = \
             pygame.image.load(path.join("assets", "background.png")).convert()
@@ -46,22 +51,38 @@ class Main:
         self.animal = Animal(self.screen)
 
         self.fonts = {
-            'score': pygame.font.Font('assets/GochiHand-Regular.ttf', 50)
+            'score': pygame.font.Font('assets/GochiHand-Regular.ttf', 50),
+            'title': pygame.font.Font('assets/GochiHand-Regular.ttf', 100),
+            'menu': pygame.font.Font('assets/GochiHand-Regular.ttf', 30)
         }
+
+        # menu
+        self.text_color = (0, 0, 0)
+        self.menu_color = (0, 0, 255)
+        self.menu_item_texts = ["Start", "Quit"]
+        self.menu_items = []
+        self.selected_menu_item = 0
 
     def main(self):
         while self.running:
-            self.events()
-            self.loop()
-            self.render()
+            if not self.paused:
+                self.game_events()
+                self.loop_game()
+                self.render_game()
+            else:
+                self.menu_events()
+                if self.paused:
+                    self.loop_menu()
+                    self.render_menu()
 
-    def events(self):
+    def game_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 print("caught safe quit")
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE: self.running = False
+                if event.key == pygame.K_ESCAPE:
+                    self.paused = not self.paused
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.animal.dog.left()
@@ -76,7 +97,7 @@ class Main:
             self.animal.cat.right()
             self.animal.update_body()
 
-    def loop(self):
+    def loop_game(self):
         # step useless FPS clock
         milliseconds = self.clock.tick(self.FPS)
         self.playtime += milliseconds / 1000.0
@@ -133,7 +154,7 @@ class Main:
             print("GAME OVER")
             self.running = False
 
-    def render(self):
+    def render_game(self):
         self.screen.blit(self.background_image, (0, 0))
         self.obstacles.draw(self.screen)
 
@@ -146,12 +167,71 @@ class Main:
         self.screen.blit(self.animal.cat.image, self.animal.cat.rect)
 
         self.screen.blit(self.fonts['score'].render(
-            "score: {:d}".format(self.points), False, (255,255,255)), (0,0))
+            "score: {:d}".format(self.points), False, (255, 255, 255)), (0, 0))
 
         pygame.display.set_caption(self.text)
+        pygame.display.update()
+
+    def loop_menu(self):
+        self.clock.tick(self.FPS)
+
+    def menu_events(self):
+      for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("caught safe quit")
+                self.running = False
+            keys = pygame.key.get_pressed()
+            if (keys[pygame.K_s] or keys[pygame.K_DOWN]) and self.selected_menu_item < len(self.menu_item_texts) - 1:
+                self.selected_menu_item += 1
+            if (keys[pygame.K_w] or keys[pygame.K_UP]) and self.selected_menu_item > 0:
+                self.selected_menu_item -= 1
+            if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]:
+                if self.selected_menu_item == 0:
+                    self.menu_item_texts[0] = "Resume"
+                    self.paused = False
+                elif self.selected_menu_item == 1:
+                    self.running = False
+
+    def render_menu(self):
+        self.screen.blit(self.background_image, (0, 0))
+
+        title_text = self.fonts['title'].render(self.title, False, self.text_color)
+        self.screen.blit(title_text, (self.screen.get_size()[0] / 2 - title_text.get_width() / 2,
+                                      self.screen.get_size()[1] / 4))
+
+        self.menu_items.clear()
+        for i in range(len(self.menu_item_texts)):
+            string = self.menu_item_texts[i]
+            text = self.fonts['menu'].render(string, False, self.text_color)
+            menu_point = MenuPoint(text, self.screen.get_size()[
+                0] / 2 - text.get_width() / 2,
+                                   self.screen.get_size()[1] / 2 + i * (
+                                           text.get_height() + 10))
+            self.menu_items.append(menu_point)
+
+        current = self.menu_items[self.selected_menu_item]
+        pygame.draw.line(self.screen,
+                         self.menu_color,
+                         (current.x - 10,
+                          current.y + current.menu.get_height() / 2),
+                         (current.x + current.menu.get_width() + 10,
+                          current.y + current.menu.get_height() / 2),
+                         self.menu_items[0].menu.get_height() + 5)
+
+        for menu_point in self.menu_items:
+            self.screen.blit(menu_point.menu, (menu_point.x, menu_point.y))
+
         pygame.display.update()
 
 
 if __name__ == "__main__":
     main = Main((800, 600))
+
+    # Renders the game first, then immediately pauses it
+    main.game_events()
+    main.loop_game()
+    main.render_game()
+    main.paused = True
+    # ps.: I hack you
+
     main.main()
