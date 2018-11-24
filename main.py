@@ -18,6 +18,7 @@ class Main:
 
         self.running = True
         self.paused = False
+        self.game_loosed = False
 
         self.FPS = 30
         self.playtime = 0.0
@@ -65,10 +66,13 @@ class Main:
 
     def main(self):
         while self.running:
-            if not self.paused:
+            if not self.paused and not self.game_loosed:
                 self.game_events()
                 self.loop_game()
                 self.render_game()
+            elif self.game_loosed:
+                self.game_end_events()
+                self.render_game_end()
             else:
                 self.menu_events()
                 if self.paused:
@@ -151,8 +155,7 @@ class Main:
             self.difficulty)
 
         if self.points < self.MIN_SCORE:
-            print("GAME OVER")
-            self.running = False
+            self.game_loosed = True
 
     def render_game(self):
         self.screen.blit(self.background_image, (0, 0))
@@ -220,6 +223,37 @@ class Main:
 
         for menu_point in self.menu_items:
             self.screen.blit(menu_point.menu, (menu_point.x, menu_point.y))
+
+        pygame.display.update()
+
+    def game_end_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("caught safe quit")
+                self.running = False
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_SPACE] or keys[pygame.K_RETURN] or keys[pygame.K_ESCAPE]:
+                self.running = False
+
+    def render_game_end(self):
+        self.screen.blit(self.background_image, (0, 0))
+
+        title_text = self.fonts['title'].render(self.title, False,
+                                                self.text_color)
+        self.screen.blit(title_text, (self.screen.get_size()[0] / 2 - title_text.get_width() / 2,
+                                      self.screen.get_size()[1] / 4))
+
+        game_over = self.fonts['score'].render("Game Over", False, self.text_color)
+        game_over_menu = MenuPoint(game_over, self.screen.get_size()[
+            0] / 2 - game_over.get_width() / 2,
+                               self.screen.get_size()[1] / 2)
+        self.screen.blit(game_over_menu.menu, (game_over_menu.x, game_over_menu.y))
+
+        play_time = self.fonts['score'].render("Play Time: {0: .2f}".format(self.playtime), False, self.text_color)
+        play_time_menu = MenuPoint(play_time, self.screen.get_size()[
+            0] / 2 - play_time.get_width() / 2,
+                                   self.screen.get_size()[1] / 2 + 40)
+        self.screen.blit(play_time_menu.menu, (play_time_menu.x, play_time_menu.y))
 
         pygame.display.update()
 
