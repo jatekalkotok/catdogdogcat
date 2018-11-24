@@ -20,7 +20,7 @@ class Body:
     """ Body between the heads """
 
     sides = ((0, 0), (0, 0))
-    color = (0, 0, 255)
+    color = (255, 238, 170)
     thickness_multiplier = 10
 
     @property
