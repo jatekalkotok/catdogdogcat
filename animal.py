@@ -42,7 +42,7 @@ class Body:
 class Head(pygame.sprite.Sprite):
     """One head of the animal."""
 
-    MOVE_TICK_TIME = 2
+    MOVE_TICK_TIME = 1
     FREEZE_TICK_TIME = 20
 
     def __init__(self, animal, screen, animal_type):
