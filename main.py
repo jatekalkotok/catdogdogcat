@@ -4,6 +4,7 @@ from obstacle import Obstacle
 from random import randint
 from os import path
 from menupoint import MenuPoint
+from score_handler import ScoreHandler
 
 
 class Main:
@@ -18,6 +19,7 @@ class Main:
 
         self.running = True
         self.paused = False
+        self.highscore_screen = False
         self.game_loosed = False
 
         self.FPS = 30
@@ -60,7 +62,7 @@ class Main:
         # menu
         self.text_color = (0, 0, 0)
         self.menu_color = (0, 0, 255)
-        self.menu_item_texts = ["Start", "Quit"]
+        self.menu_item_texts = ["Start", "Highscores", "Quit"]
         self.menu_items = []
         self.selected_menu_item = 0
 
@@ -75,9 +77,11 @@ class Main:
                 self.render_game_end()
             else:
                 self.menu_events()
-                if self.paused:
+                if self.paused and not self.highscore_screen:
                     self.loop_menu()
                     self.render_menu()
+                elif self.highscore_screen:
+                    self.render_highscore()
 
     def game_events(self):
         for event in pygame.event.get():
@@ -155,6 +159,8 @@ class Main:
             self.difficulty)
 
         if self.points < self.MIN_SCORE:
+            # TODO a screen for give name if the user is in the top X scores
+            ScoreHandler.write_score("Unknown", self.playtime)
             self.game_loosed = True
 
     def render_game(self):
@@ -188,11 +194,15 @@ class Main:
                 self.selected_menu_item += 1
             if (keys[pygame.K_w] or keys[pygame.K_UP]) and self.selected_menu_item > 0:
                 self.selected_menu_item -= 1
+            if keys[pygame.K_ESCAPE] and self.highscore_screen:
+                self.highscore_screen = False
             if keys[pygame.K_SPACE] or keys[pygame.K_RETURN]:
                 if self.selected_menu_item == 0:
                     self.menu_item_texts[0] = "Resume"
                     self.paused = False
                 elif self.selected_menu_item == 1:
+                    self.highscore_screen = True
+                elif self.selected_menu_item == 2:
                     self.running = False
 
     def render_menu(self):
@@ -223,6 +233,31 @@ class Main:
 
         for menu_point in self.menu_items:
             self.screen.blit(menu_point.menu, (menu_point.x, menu_point.y))
+
+        pygame.display.update()
+
+    def render_highscore(self):
+        self.screen.blit(self.background_image, (0, 0))
+
+        back_title = self.fonts['menu'].render("press Escape to go back", False, self.text_color)
+        self.screen.blit(back_title, (10, 10))
+
+        scores = ScoreHandler.read_scores()
+        if len(scores) == 0:
+            title_text = self.fonts['title'].render("No highscores", False,
+                                                    self.text_color)
+            self.screen.blit(title_text, (self.screen.get_size()[0] / 2 - title_text.get_width() / 2,
+                                          self.screen.get_size()[1] / 4))
+        else:
+            for i in range(len(scores)):
+                string = scores[i]
+                text = self.fonts['score'].render("{0:d} - {1:s}".format(i + 1, string),
+                                                  False, self.text_color)
+                menu_point = MenuPoint(text, self.screen.get_size()[
+                    0] / 2 - text.get_width() / 2,
+                                       self.screen.get_size()[1] / 4 + i * (
+                                               text.get_height() + 10))
+                self.screen.blit(menu_point.menu, (menu_point.x, menu_point.y))
 
         pygame.display.update()
 
