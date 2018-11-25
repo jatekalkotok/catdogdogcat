@@ -136,9 +136,13 @@ class Main:
         # TODO: instead of _off_ the screen, trigger when _hits_ the screen and
         # have a dramatic impact animation so the player feels it is bad
         for o in self.obstacles:
-            if o.rect.y > self.screen.get_rect().height:
+            if o.rect.y + o.rect.height > self.screen.get_rect().height:
                 self.obstacles.remove(o)
-                if len(o.for_what): self.points -= 1
+                if len(o.for_what):
+                    self.points -= 1
+                    o.rect.y -= o.rect.height
+                    self.score_bubbles.add(o)
+                    o.destroy("-1")
 
         for b in self.score_bubbles:
             if b.gone: self.score_bubbles.remove(b)
