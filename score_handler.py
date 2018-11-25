@@ -7,13 +7,16 @@ class ScoreHandler:
         file.close()
         return scores
 
-    # TODO: max number of highscores?
-    # TODO: order the scores
     @staticmethod
     def write_score(user, score):
-        file = open("highscore.txt", "a")
-        file.write(user)
-        file.write(":")
-        file.write("{0:.2f}".format(score))
-        file.write("\n")
-        file.close()
+        with open("highscore.txt", 'r+') as f:
+            scores = [s.split(':') for s in f.read().splitlines()]
+            scores.append([user, score])
+            scores = sorted(
+                scores,
+                key=lambda score: float(score[1]),
+                reverse=True
+            )[:5] # Top 5! (can't really fit more on the screen)
+            f.seek(0)
+            f.write("\n".join([ ':'.join(s) for s in scores ]) + "\n")
+            f.truncate()

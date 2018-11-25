@@ -177,7 +177,7 @@ class Main:
 
         if self.points < self.MIN_SCORE:
             # TODO a screen for give name if the user is in the top X scores
-            ScoreHandler.write_score("Unknown", self.playtime)
+            ScoreHandler.write_score("Unknown", "{0:.2f}".format(self.playtime))
             self.game_loosed = True
 
     def render_game(self):
