@@ -52,8 +52,11 @@ class Head(pygame.sprite.Sprite):
             raise ValueError("Animal Head must be one of 'dog' or 'cat'")
         self.screen = screen
         self.animal_type = animal_type
-        self.image = pygame.image.load(
-            path.join("assets", animal_type + ".png"))
+        self._images = {
+            'alive': pygame.image.load(path.join("assets", animal_type + ".png")),
+            'dead': pygame.image.load(path.join("assets", animal_type + "-dead.png")),
+        }
+        self.image = self._images['alive']
         self.rect = self.image.get_rect()
         self._start_pos()
         self.move_ticker = 0
@@ -90,6 +93,7 @@ class Head(pygame.sprite.Sprite):
                 self._freeze_ticker -= 1
             else:
                 self._frozen = False
+                self.image = self._images['alive']
 
     def left(self):
         """Step left but not into negative"""
@@ -114,4 +118,5 @@ class Head(pygame.sprite.Sprite):
     def freeze(self):
         """Stop the head from moving for a while"""
         self._frozen = True
+        self.image = self._images['dead']
         self._freeze_ticker = self.FREEZE_TICK_TIME
