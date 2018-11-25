@@ -7,6 +7,9 @@ for x in ["milk", "broccoli", "bone", "fish"]:
 
 
 class Obstacle(pygame.sprite.Sprite):
+
+    EATEN_TICK_TIME = 10
+
     def __init__(self, for_dog, for_cat, pos=(0, 0)):
         pygame.sprite.Sprite.__init__(self)
         self.image = self._whatami(for_dog, for_cat)
@@ -15,9 +18,19 @@ class Obstacle(pygame.sprite.Sprite):
         self.for_what = []
         if for_dog: self.for_what.append('dog')
         if for_cat: self.for_what.append('cat')
+        self.gone = False
+        self._eaten = False
+        self._eaten_ticker = 0
+        self._font = pygame.font.Font('assets/GochiHand-Regular.ttf', 50)
 
-    def update(self, gravity):
+    def update(self, gravity=0):
         self._drop(gravity)
+        # tick eaten until you disappear
+        if self._eaten:
+            if self._eaten_ticker > 0:
+                self._eaten_ticker -= 1
+            else:
+                self.gone = True
 
     def _whatami(self, for_dog, for_cat):
         if for_dog and for_cat:
@@ -31,3 +44,8 @@ class Obstacle(pygame.sprite.Sprite):
 
     def _drop(self, gravity):
         self.rect.move_ip(0, gravity)
+
+    def eat(self, points):
+        self._eaten = True
+        self._eaten_ticker = self.EATEN_TICK_TIME
+        self.image = self._font.render(points, False, (255, 255, 255))

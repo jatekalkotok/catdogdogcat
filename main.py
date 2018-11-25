@@ -38,6 +38,9 @@ class Main:
         self.obstacle_tick_time = 0
         self.obstacles = pygame.sprite.Group()
 
+        # things that pop up by your head when you eat food
+        self.score_bubbles = pygame.sprite.Group()
+
         # player score
         self.points = 0
         self.MIN_SCORE = -9
@@ -126,6 +129,7 @@ class Main:
 
         # animal food falls down
         self.obstacles.update(self.gravity)
+        self.score_bubbles.update()
 
         # food off the screen is removed
         # TODO: instead of _off_ the screen, trigger when _hits_ the screen and
@@ -134,6 +138,9 @@ class Main:
             if o.rect.y > self.screen.get_rect().height:
                 self.obstacles.remove(o)
                 if len(o.for_what): self.points -= 1
+
+        for b in self.score_bubbles:
+            if b.gone: self.score_bubbles.remove(b)
 
         if int(self.playtime) == self.difficulty_tick_time:
             self.difficulty_tick_time += self.difficulty_frequency_sec
@@ -145,10 +152,13 @@ class Main:
             for caught in pygame.sprite.spritecollide(a, self.obstacles, True):
                 if a.animal_type in caught.for_what:
                     self.points += 1
+                    caught.eat("+1")
                     a.eat()
                 else:
                     self.points -= 2
+                    caught.eat("-2")
                     a.freeze()
+                self.score_bubbles.add(caught)
 
         # update heads state
         self.animal.dog.update()
@@ -177,6 +187,7 @@ class Main:
         self.screen.blit(self.animal.dog.image, self.animal.dog.rect)
         self.screen.blit(self.animal.cat.image, self.animal.cat.rect)
 
+        self.score_bubbles.draw(self.screen)
         self.screen.blit(self.fonts['score'].render(
             "score: {:d}".format(self.points), False, (255, 255, 255)), (0, 0))
 
