@@ -44,6 +44,7 @@ class Head(pygame.sprite.Sprite):
 
     MOVE_TICK_TIME = 1
     FREEZE_TICK_TIME = 20
+    EAT_TICK_TIME = 10
 
     def __init__(self, animal, screen, animal_type):
         pygame.sprite.Sprite.__init__(self)
@@ -55,6 +56,7 @@ class Head(pygame.sprite.Sprite):
         self._images = {
             'alive': pygame.image.load(path.join("assets", animal_type + ".png")),
             'dead': pygame.image.load(path.join("assets", animal_type + "-dead.png")),
+            'eat': pygame.image.load(path.join("assets", animal_type + "-eat.png")),
         }
         self.image = self._images['alive']
         self.rect = self.image.get_rect()
@@ -62,7 +64,9 @@ class Head(pygame.sprite.Sprite):
         self.move_ticker = 0
         self._step = screen.get_size()[0] / self.image.get_size()[0] / 2
         self._frozen = False
+        self._eating = False
         self._freeze_ticker = 0
+        self._eat_ticker = 0
 
     def _start_pos(self):
         """Calculate starting position for animal head"""
@@ -95,6 +99,14 @@ class Head(pygame.sprite.Sprite):
                 self._frozen = False
                 self.image = self._images['alive']
 
+        # tick down eating face until not eating
+        if self._eating:
+            if self._eat_ticker > 0:
+                self._eat_ticker -= 1
+            else:
+                self._eating = False
+                self.image = self._images['alive']
+
     def left(self):
         """Step left but not into negative"""
         if self.move_ticker > 0: return
@@ -120,3 +132,9 @@ class Head(pygame.sprite.Sprite):
         self._frozen = True
         self.image = self._images['dead']
         self._freeze_ticker = self.FREEZE_TICK_TIME
+
+    def eat(self):
+        """Eat a piece of good food"""
+        self._eating = True
+        self.image = self._images['eat']
+        self._eat_ticker = self.EAT_TICK_TIME
