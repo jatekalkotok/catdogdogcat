@@ -185,6 +185,11 @@ class Main:
         self.obstacles.draw(self.screen)
 
         pygame.draw.line(self.screen,
+                         (0, 0, 0),
+                         self.animal.body.sides[0],
+                         self.animal.body.sides[1],
+                         self.animal.body.thickness +10)
+        pygame.draw.line(self.screen,
                          self.animal.body.color,
                          self.animal.body.sides[0],
                          self.animal.body.sides[1],
