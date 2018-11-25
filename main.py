@@ -153,11 +153,11 @@ class Main:
             for caught in pygame.sprite.spritecollide(a, self.obstacles, True):
                 if a.animal_type in caught.for_what:
                     self.points += 1
-                    caught.eat("+1")
+                    caught.destroy("+1")
                     a.eat()
                 else:
                     self.points -= 2
-                    caught.eat("-2")
+                    caught.destroy("-2")
                     a.freeze()
                 self.score_bubbles.add(caught)
 
