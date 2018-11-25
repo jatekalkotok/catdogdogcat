@@ -142,13 +142,13 @@ class Main:
 
         # food you catch earns points
         for a in [self.animal.dog, self.animal.cat]:
-            caught = pygame.sprite.spritecollide( a, self.obstacles, True)
-            eaten = len([c for c in caught if a.animal_type in c.for_what])
-            self.points += eaten
-            if eaten > 0: a.eat()
-            miscatch = len([c for c in caught if a.animal_type not in c.for_what])
-            self.points -= 2 * miscatch
-            if miscatch > 0: a.freeze()
+            for caught in pygame.sprite.spritecollide(a, self.obstacles, True):
+                if a.animal_type in caught.for_what:
+                    self.points += 1
+                    a.eat()
+                else:
+                    self.points -= 2
+                    a.freeze()
 
         # update heads state
         self.animal.dog.update()
