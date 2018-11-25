@@ -5,6 +5,7 @@ from random import randint
 from os import path
 from menupoint import MenuPoint
 from score_handler import ScoreHandler
+import ptext
 
 
 class Main:
@@ -188,8 +189,9 @@ class Main:
         self.screen.blit(self.animal.cat.image, self.animal.cat.rect)
 
         self.score_bubbles.draw(self.screen)
-        self.screen.blit(self.fonts['score'].render(
-            "score: {:d}".format(self.points), False, (255, 255, 255)), (0, 0))
+        ptext.draw("score: {:d}".format(self.points), (0, 0),
+            fontname='assets/GochiHand-Regular.ttf', fontsize=50, color="white",
+            owidth=1.5, ocolor="black", surf=self.screen)
 
         pygame.display.set_caption(self.text)
         pygame.display.update()
