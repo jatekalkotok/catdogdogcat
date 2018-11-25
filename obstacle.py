@@ -1,4 +1,5 @@
 import pygame
+import ptext
 from os import path
 
 _assets = {}
@@ -21,7 +22,6 @@ class Obstacle(pygame.sprite.Sprite):
         self.gone = False
         self._eaten = False
         self._eaten_ticker = 0
-        self._font = pygame.font.Font('assets/GochiHand-Regular.ttf', 50)
 
     def update(self, gravity=0):
         self._drop(gravity)
@@ -48,4 +48,7 @@ class Obstacle(pygame.sprite.Sprite):
     def eat(self, points):
         self._eaten = True
         self._eaten_ticker = self.EATEN_TICK_TIME
-        self.image = self._font.render(points, False, (255, 255, 255))
+
+        self.image = ptext.draw(points, (0, 0), surf=None,
+            fontname='assets/GochiHand-Regular.ttf', fontsize=50, color="white",
+            owidth=1.5, ocolor="black")[0]
